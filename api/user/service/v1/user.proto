@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package user.service.v1;
+
+option go_package = "api/user/service/v1;v1";
+
+
+service UserService {
+  rpc GetUser(GetUserReq) returns (UserReply) {
+  }
+
+  rpc GetUserList(GetUserListReq) returns (UserReply) {
+  }
+
+  rpc UpdateUser(UpdateUserReq) returns (UserReply){
+  }
+
+  rpc DeleteUser(DeleteUserReq) returns (UserReply){
+  }
+  rpc GetUserByUsername(GetUserByUsernameReq) returns (UserReply) {
+  }
+  rpc VerifyPassword(VerifyPasswordReq) returns (VerifyPasswordReply) {
+  }
+  //todo
+  rpc ForgetPassword(ForgetPasswordReq) returns (UserReply){};
+}
+
+message User {
+  uint64 id=1;
+  string user_name=2;
+  string real_name=3;
+  int32 phone =4;
+  string token=5;
+}
+
+message UserP {
+  uint64 id=1;
+  string user_name=2;
+  string real_name=3;
+  int32 phone =4;
+  string password=5;
+}
+
+message QueryParam{
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message GetUserReq {
+  uint64 id=1;
+}
+
+message GetUserListReq {
+  QueryParam params =1;
+}
+
+message UpdateUserReq{
+  User data =1;
+}
+
+message  DeleteUserReq{
+  uint64 id=1;
+}
+
+message  GetUserByUsernameReq{
+  string user_name=1;
+}
+
+message  VerifyPasswordReq {
+  string username = 1;
+  string password = 2;
+}
+
+//todo
+message ForgetPasswordReq{
+  string username = 1;
+}
+
+message UserReply{
+  User user = 1;
+}
+
+message VerifyPasswordReply{
+  bool ok = 1;
+  int64 id = 2;
+}
