@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -27,7 +28,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "app/system/interface/configs", "config path, eg: -conf config.yaml")
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
@@ -45,6 +46,8 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 }
 
 func main() {
+	s, _ := os.Getwd()
+	fmt.Println(s)
 	flag.Parse()
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
@@ -63,6 +66,8 @@ func main() {
 	defer c.Close()
 
 	if err := c.Load(); err != nil {
+		to, _ := os.Getwd()
+		panic(to)
 		panic(err)
 	}
 

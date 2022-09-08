@@ -9,11 +9,11 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"kratos-realworld/internal/biz"
-	"kratos-realworld/internal/conf"
-	"kratos-realworld/internal/data"
-	"kratos-realworld/internal/server"
-	"kratos-realworld/internal/service"
+	"veigit-system/app/user/service/internal/biz"
+	"veigit-system/app/user/service/internal/conf"
+	"veigit-system/app/user/service/internal/data"
+	"veigit-system/app/user/service/internal/server"
+	"veigit-system/app/user/service/internal/service"
 )
 
 // initApp init kratos application.

@@ -18,6 +18,7 @@ type Data struct {
 	uc  userv1.UserServiceClient
 }
 
+// todo db
 // NewData .
 func NewData(c *conf.Data, uc userv1.UserServiceClient, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
@@ -29,7 +30,7 @@ func NewData(c *conf.Data, uc userv1.UserServiceClient, logger log.Logger) (*Dat
 func NewUserServiceClient(ac *conf.Auth) userv1.UserServiceClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("127.0.0.1:9000"),
+		grpc.WithEndpoint("192.168.20.10:9000"),
 		//grpc.WithDiscovery(r),
 		//grpc.WithMiddleware(
 		//	tracing.Client(tracing.WithTracerProvider(tp)),

@@ -15,8 +15,8 @@ type GreeterService struct {
 }
 
 // NewGreeterService new a greeter service.
-func NewGreeterService(uc *biz.UserUseCase) *GreeterService {
-	return &GreeterService{uc: uc}
+func NewGreeterService(ac *biz.AuthUseCase, uc *biz.UserUseCase) *GreeterService {
+	return &GreeterService{ac: ac, uc: uc}
 }
 
 func (s *GreeterService) Login(ctx context.Context, req *v1.LoginReq) (reply *v1.LoginReply, err error) {

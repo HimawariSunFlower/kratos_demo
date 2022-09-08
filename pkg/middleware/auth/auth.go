@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-realworld/api/user/service/v1"
 	"strings"
 	"time"
+	"veigit-system/api/user/service/v1"
 
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"

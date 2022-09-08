@@ -9,11 +9,11 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"kratos-realworld/internal/biz"
-	"kratos-realworld/internal/conf"
-	"kratos-realworld/internal/data"
-	"kratos-realworld/internal/server"
-	"kratos-realworld/internal/service"
+	"veigit-system/app/user/service/internal/biz"
+	"veigit-system/app/user/service/internal/conf"
+	"veigit-system/app/user/service/internal/data"
+	"veigit-system/app/user/service/internal/server"
+	"veigit-system/app/user/service/internal/service"
 )
 
 // Injectors from wire.go:
@@ -27,10 +27,9 @@ func initApp(confServer *conf.Server, confData *conf.Data, jwt *conf.JWT, logger
 	}
 	userRepo := data.NewUserRepo(dataData, logger)
 	userUsecase := biz.NewUserUsecase(userRepo, logger, jwt)
-	conduitService := service.NewConduitService(userUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, jwt, conduitService, logger)
-	grpcServer := server.NewGRPCServer(confServer, conduitService, logger)
-	app := newApp(logger, httpServer, grpcServer)
+	userService := service.NewUserService(userUsecase, logger)
+	grpcServer := server.NewGRPCServer(confServer, userService, logger)
+	app := newApp(logger, grpcServer)
 	return app, func() {
 		cleanup()
 	}, nil
