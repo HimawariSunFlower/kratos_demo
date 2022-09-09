@@ -5,14 +5,13 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"veigit-system/pkg/constant"
+	"veigit-system/pkg/middleware/auth"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/middleware"
-	jwtV4 "github.com/golang-jwt/jwt/v4"
 	"github.com/spf13/cast"
 )
 
@@ -99,14 +98,11 @@ func Server(opts ...Option) middleware.Middleware {
 			if !ok {
 				return nil, ErrSecurityParseFailed
 			}
-			mc, ok := claims.(jwtV4.MapClaims)
+			mc, ok := claims.(auth.MyClaims)
 			if !ok {
 				return nil, ErrSecurityParseFailed
 			}
-			userid, ok := mc[constant.JWT_USERID]
-			if !ok {
-				return nil, ErrSecurityParseFailed
-			}
+			userid := mc.Uid
 
 			tr, ok := transport.FromServerContext(ctx)
 			if !ok {

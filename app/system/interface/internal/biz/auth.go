@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"time"
 	v1 "veigit-system/api/system/interface/v1"
 	"veigit-system/app/system/interface/internal/conf"
-	"veigit-system/pkg/constant"
+	"veigit-system/pkg/middleware/auth"
 )
 
 var (
@@ -37,10 +38,15 @@ func (receiver *AuthUseCase) Login(ctx context.Context, req *v1.LoginReq) (*v1.L
 	if err != nil {
 		return nil, v1.ErrorLoginFailed("password not match")
 	}
+	myClaims := auth.MyClaims{
+		Uid: user.Id,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 2)), //设置JWT过期时间,此处设置为2小时
+			Issuer:    "test",                                            //设置签发人
+		},
+	}
 	// generate token
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		constant.JWT_USERID: user.Id,
-	})
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims)
 	signedString, err := claims.SignedString([]byte(receiver.key))
 	if err != nil {
 		return nil, v1.ErrorLoginFailed("generate token failed: %s", err.Error())

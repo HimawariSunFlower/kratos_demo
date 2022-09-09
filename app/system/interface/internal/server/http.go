@@ -15,6 +15,7 @@ import (
 	"veigit-system/app/system/interface/internal/conf"
 	"veigit-system/app/system/interface/internal/service"
 	"veigit-system/pkg/casbin"
+	"veigit-system/pkg/middleware/auth"
 )
 
 func NewWhiteListMatcher() selector.MatchFunc {
@@ -40,7 +41,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, casbin2 *conf.Casbin, ad *gorm
 			selector.Server(
 				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
 					return []byte(ac.ApiKey), nil
-				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256), jwt.WithClaims(&jwt2.MapClaims{})),
+				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256), jwt.WithClaims(&auth.MyClaims{})),
 				casbin.Server(casbin.WithCasbinModel(m), casbin.WithCasbinPolicy(ad)),
 			).Match(NewWhiteListMatcher()).Build(),
 		),
