@@ -1,6 +1,8 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	jwt2 "github.com/golang-jwt/jwt/v4"
 	"veigit-system/api/user/service/v1"
 	"veigit-system/app/user/service/internal/conf"
 	"veigit-system/app/user/service/internal/service"
@@ -11,10 +13,13 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, s *service.UserService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, ac *conf.JWT, s *service.UserService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			jwt.Server(func(token *jwt2.Token) (interface{}, error) {
+				return []byte(ac.Secret), nil
+			}, jwt.WithSigningMethod(jwt2.SigningMethodHS256)),
 		),
 	}
 	if c.Grpc.Network != "" {

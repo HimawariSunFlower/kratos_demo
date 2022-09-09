@@ -27,7 +27,7 @@ service UserService {
 
 message User {
   uint64 id=1;
-  string user_name=2;
+  string username=2;
   string real_name=3;
   int32 phone =4;
   string token=5;
@@ -35,7 +35,7 @@ message User {
 
 message UserP {
   uint64 id=1;
-  string user_name=2;
+  string username=2;
   string real_name=3;
   int32 phone =4;
   string password=5;
@@ -63,7 +63,7 @@ message  DeleteUserReq{
 }
 
 message  GetUserByUsernameReq{
-  string user_name=1;
+  string username=1;
 }
 
 message  VerifyPasswordReq {

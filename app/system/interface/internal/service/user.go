@@ -27,6 +27,11 @@ func (s *GreeterService) Logout(ctx context.Context, req *v1.LogoutReq) (reply *
 	//todo jwt logout
 	return &v1.LogoutReply{}, nil
 }
+
 func (s *GreeterService) Register(ctx context.Context, req *v1.RegisterReq) (reply *v1.RegisterReply, err error) {
 	return s.ac.Register(ctx, req)
+}
+
+func (s *GreeterService) GetUser(ctx context.Context, req *v1.GetUserReq) (reply *v1.GetUserReply, err error) {
+	return s.uc.GetUser(ctx, req.Id)
 }

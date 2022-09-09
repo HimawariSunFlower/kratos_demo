@@ -25,6 +25,7 @@ type InterfaceClient interface {
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterReply, error)
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginReply, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutReply, error)
+	GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error)
 }
 
 type interfaceClient struct {
@@ -62,6 +63,15 @@ func (c *interfaceClient) Logout(ctx context.Context, in *LogoutReq, opts ...grp
 	return out, nil
 }
 
+func (c *interfaceClient) GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error) {
+	out := new(GetUserReply)
+	err := c.cc.Invoke(ctx, "/system.interface.v1.Interface/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InterfaceServer is the server API for Interface service.
 // All implementations must embed UnimplementedInterfaceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type InterfaceServer interface {
 	Register(context.Context, *RegisterReq) (*RegisterReply, error)
 	Login(context.Context, *LoginReq) (*LoginReply, error)
 	Logout(context.Context, *LogoutReq) (*LogoutReply, error)
+	GetUser(context.Context, *GetUserReq) (*GetUserReply, error)
 	mustEmbedUnimplementedInterfaceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedInterfaceServer) Login(context.Context, *LoginReq) (*LoginRep
 }
 func (UnimplementedInterfaceServer) Logout(context.Context, *LogoutReq) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedInterfaceServer) GetUser(context.Context, *GetUserReq) (*GetUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedInterfaceServer) mustEmbedUnimplementedInterfaceServer() {}
 
@@ -152,6 +166,24 @@ func _Interface_Logout_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Interface_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InterfaceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/system.interface.v1.Interface/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InterfaceServer).GetUser(ctx, req.(*GetUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Interface_ServiceDesc is the grpc.ServiceDesc for Interface service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var Interface_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Interface_Logout_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _Interface_GetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

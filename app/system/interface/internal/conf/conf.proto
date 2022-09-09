@@ -9,6 +9,7 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
   Auth auth = 4;
+  Casbin casbin = 5;
 }
 
 message Server {
@@ -46,4 +47,6 @@ message Auth {
   string api_key = 2;
 }
 
-
+message Casbin{
+  string model =1;
+}

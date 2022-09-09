@@ -43,7 +43,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserReq) (re
 }
 
 func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.GetUserByUsernameReq) (reply *v1.UserReply, err error) {
-	u, err := s.uc.GetUserByUsername(ctx, req.UserName)
+	u, err := s.uc.GetUserByUsername(ctx, req.Username)
 	if err != nil {
 		return nil, err
 	}

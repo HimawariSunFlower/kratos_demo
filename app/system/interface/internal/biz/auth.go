@@ -6,6 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	v1 "veigit-system/api/system/interface/v1"
 	"veigit-system/app/system/interface/internal/conf"
+	"veigit-system/pkg/constant"
 )
 
 var (
@@ -38,7 +39,7 @@ func (receiver *AuthUseCase) Login(ctx context.Context, req *v1.LoginReq) (*v1.L
 	}
 	// generate token
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.Id,
+		constant.JWT_USERID: user.Id,
 	})
 	signedString, err := claims.SignedString([]byte(receiver.key))
 	if err != nil {

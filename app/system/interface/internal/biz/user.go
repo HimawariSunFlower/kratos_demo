@@ -5,6 +5,8 @@ import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"math/rand"
+	v1 "veigit-system/api/system/interface/v1"
+	"veigit-system/pkg/tools"
 )
 
 var (
@@ -37,7 +39,7 @@ func NewUser(username string, password string) (User, error) {
 }
 
 type UserRepo interface {
-	Find(ctx context.Context, id int64) (*User, error)
+	Find(ctx context.Context, id uint64) (*User, error)
 	FindByUsername(ctx context.Context, username string) (*User, error)
 	Save(ctx context.Context, u *User) error
 
@@ -61,4 +63,14 @@ func NewUserUseCase(repo UserRepo, logger log.Logger, authUc *AuthUseCase) *User
 
 func (uc *UserUseCase) Logout(ctx context.Context, u *User) error {
 	return nil
+}
+
+func (uc *UserUseCase) GetUser(ctx context.Context, uid uint64) (*v1.GetUserReply, error) {
+	user, err := uc.repo.Find(ctx, uid)
+	if err != nil {
+		return nil, v1.ErrorUnknownError(err.Error())
+	}
+	ret := &v1.GetUserReply{}
+	tools.Copy(user, ret)
+	return ret, nil
 }

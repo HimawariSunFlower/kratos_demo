@@ -23,19 +23,25 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (rp *userRepo) Find(ctx context.Context, id int64) (*biz.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (rp *userRepo) FindByUsername(ctx context.Context, username string) (*biz.User, error) {
-	user, err := rp.data.uc.GetUserByUsername(ctx, &usV1.GetUserByUsernameReq{UserName: username})
+func (rp *userRepo) Find(ctx context.Context, id uint64) (*biz.User, error) {
+	user, err := rp.data.uc.GetUser(ctx, &usV1.GetUserReq{Id: id})
 	if err != nil {
 		return nil, biz.ErrUserNotFound
 	}
 	return &biz.User{
 		Id:       user.User.Id,
-		Username: user.User.UserName,
+		Username: user.User.Username,
+	}, nil
+}
+
+func (rp *userRepo) FindByUsername(ctx context.Context, username string) (*biz.User, error) {
+	user, err := rp.data.uc.GetUserByUsername(ctx, &usV1.GetUserByUsernameReq{Username: username})
+	if err != nil {
+		return nil, biz.ErrUserNotFound
+	}
+	return &biz.User{
+		Id:       user.User.Id,
+		Username: user.User.Username,
 	}, nil
 }
 

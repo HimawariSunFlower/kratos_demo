@@ -16,3 +16,5 @@ data:
 auth:
   service_key: "hello"
   api_key: "hello"
+casbin:
+  model: "./pkg/casbin/rbac_model.conf"

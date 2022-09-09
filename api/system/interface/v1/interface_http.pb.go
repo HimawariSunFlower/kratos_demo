@@ -19,11 +19,13 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationInterfaceGetUser = "/system.interface.v1.Interface/GetUser"
 const OperationInterfaceLogin = "/system.interface.v1.Interface/Login"
 const OperationInterfaceLogout = "/system.interface.v1.Interface/Logout"
 const OperationInterfaceRegister = "/system.interface.v1.Interface/Register"
 
 type InterfaceHTTPServer interface {
+	GetUser(context.Context, *GetUserReq) (*GetUserReply, error)
 	Login(context.Context, *LoginReq) (*LoginReply, error)
 	Logout(context.Context, *LogoutReq) (*LogoutReply, error)
 	Register(context.Context, *RegisterReq) (*RegisterReply, error)
@@ -34,6 +36,7 @@ func RegisterInterfaceHTTPServer(s *http.Server, srv InterfaceHTTPServer) {
 	r.POST("/v1/register", _Interface_Register0_HTTP_Handler(srv))
 	r.POST("/v1/login", _Interface_Login0_HTTP_Handler(srv))
 	r.POST("/v1/logout", _Interface_Logout0_HTTP_Handler(srv))
+	r.GET("/v1/users/{id}", _Interface_GetUser0_HTTP_Handler(srv))
 }
 
 func _Interface_Register0_HTTP_Handler(srv InterfaceHTTPServer) func(ctx http.Context) error {
@@ -93,7 +96,30 @@ func _Interface_Logout0_HTTP_Handler(srv InterfaceHTTPServer) func(ctx http.Cont
 	}
 }
 
+func _Interface_GetUser0_HTTP_Handler(srv InterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetUserReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationInterfaceGetUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetUser(ctx, req.(*GetUserReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type InterfaceHTTPClient interface {
+	GetUser(ctx context.Context, req *GetUserReq, opts ...http.CallOption) (rsp *GetUserReply, err error)
 	Login(ctx context.Context, req *LoginReq, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Logout(ctx context.Context, req *LogoutReq, opts ...http.CallOption) (rsp *LogoutReply, err error)
 	Register(ctx context.Context, req *RegisterReq, opts ...http.CallOption) (rsp *RegisterReply, err error)
@@ -105,6 +131,19 @@ type InterfaceHTTPClientImpl struct {
 
 func NewInterfaceHTTPClient(client *http.Client) InterfaceHTTPClient {
 	return &InterfaceHTTPClientImpl{client}
+}
+
+func (c *InterfaceHTTPClientImpl) GetUser(ctx context.Context, in *GetUserReq, opts ...http.CallOption) (*GetUserReply, error) {
+	var out GetUserReply
+	pattern := "/v1/users/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationInterfaceGetUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *InterfaceHTTPClientImpl) Login(ctx context.Context, in *LoginReq, opts ...http.CallOption) (*LoginReply, error) {
