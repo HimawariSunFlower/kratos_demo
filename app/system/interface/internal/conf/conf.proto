@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "system/internal/conf;conf";
+option go_package = "app/system/interface/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
@@ -10,6 +10,7 @@ message Bootstrap {
   Data data = 2;
   Auth auth = 4;
   Casbin casbin = 5;
+  Trace trace = 6;
 }
 
 message Server {
@@ -49,4 +50,16 @@ message Auth {
 
 message Casbin{
   string model =1;
+}
+
+message Trace {
+  string endpoint = 1;
+}
+
+message Registry {
+  message Consul {
+    string address = 1;
+    string scheme = 2;
+  }
+  Consul consul = 1;
 }

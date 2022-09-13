@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package system.admin.v1;
+
+
+option go_package = "api/system/admin/v1;v1";
+
+service Admin {
+
+}
+

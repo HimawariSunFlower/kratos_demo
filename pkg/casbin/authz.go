@@ -33,7 +33,7 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && (r.act == p.act || p.act == "*") || r.sub == "admin"
+m = g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && (r.act == p.act || p.act == "*") || r.sub == "1"
 `
 )
 
@@ -98,7 +98,7 @@ func Server(opts ...Option) middleware.Middleware {
 			if !ok {
 				return nil, ErrSecurityParseFailed
 			}
-			mc, ok := claims.(auth.MyClaims)
+			mc, ok := claims.(*auth.MyClaims)
 			if !ok {
 				return nil, ErrSecurityParseFailed
 			}

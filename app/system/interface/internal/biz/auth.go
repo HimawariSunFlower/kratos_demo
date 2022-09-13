@@ -3,8 +3,6 @@ package biz
 import (
 	"context"
 	"errors"
-	"github.com/golang-jwt/jwt/v4"
-	"time"
 	v1 "veigit-system/api/system/interface/v1"
 	"veigit-system/app/system/interface/internal/conf"
 	"veigit-system/pkg/middleware/auth"
@@ -38,16 +36,9 @@ func (receiver *AuthUseCase) Login(ctx context.Context, req *v1.LoginReq) (*v1.L
 	if err != nil {
 		return nil, v1.ErrorLoginFailed("password not match")
 	}
-	myClaims := auth.MyClaims{
-		Uid: user.Id,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 2)), //设置JWT过期时间,此处设置为2小时
-			Issuer:    "test",                                            //设置签发人
-		},
-	}
-	// generate token
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims)
-	signedString, err := claims.SignedString([]byte(receiver.key))
+
+	signedString, err := auth.GenerateToken(uint(user.Id), receiver.key)
+
 	if err != nil {
 		return nil, v1.ErrorLoginFailed("generate token failed: %s", err.Error())
 	}
@@ -74,6 +65,6 @@ func (receiver *AuthUseCase) Register(ctx context.Context, req *v1.RegisterReq) 
 		return nil, v1.ErrorRegisterFailed("save user failed: %s", err.Error())
 	}
 	return &v1.RegisterReply{
-		Id: user.Id,
+		Id: uint64(user.Id),
 	}, nil
 }

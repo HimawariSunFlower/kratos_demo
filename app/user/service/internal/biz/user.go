@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"veigit-system/api/user/service/v1"
 	"veigit-system/app/user/service/internal/conf"
 	"veigit-system/pkg/middleware/auth"
@@ -14,20 +15,20 @@ import (
 type User struct {
 	Id           uint
 	Phone        int
-	UserName     string
+	Username     string
 	RealName     string
 	PasswordHash string `copier:"Password"`
 }
 
 type UserLogin struct {
 	Phone    int
-	UserName string
+	Username string
 	Token    string
 }
 
 type UserUpdate struct {
 	Phone    int
-	UserName string
+	Username string
 	Password string
 }
 
@@ -74,13 +75,14 @@ func NewUserUsecase(ur UserRepo, logger log.Logger, jwtc *conf.JWT) *UserUsecase
 }
 
 func (uc *UserUsecase) generateToken(userID uint) string {
-	return auth.GenerateToken(uc.jwtc.Secret, userID)
+	ret, _ := auth.GenerateToken(userID, uc.jwtc.Secret)
+	return ret
 }
 
 func (uc *UserUsecase) Register(ctx context.Context, in *User) (*UserLogin, error) {
 	u := &User{
 		Phone:        in.Phone,
-		UserName:     in.UserName,
+		Username:     in.Username,
 		RealName:     in.RealName,
 		PasswordHash: hashPassword(in.PasswordHash),
 	}
@@ -89,7 +91,7 @@ func (uc *UserUsecase) Register(ctx context.Context, in *User) (*UserLogin, erro
 	}
 	return &UserLogin{
 		Phone:    in.Phone,
-		UserName: in.UserName,
+		Username: in.Username,
 		Token:    uc.generateToken(u.Id),
 	}, nil
 }
@@ -108,14 +110,18 @@ func (uc *UserUsecase) Login(ctx context.Context, phone int, password string) (*
 
 	return &UserLogin{
 		Phone:    u.Phone,
-		UserName: u.UserName,
+		Username: u.Username,
 		Token:    uc.generateToken(u.Id),
 	}, nil
 }
 
 func (uc *UserUsecase) GetCurrentUser(ctx context.Context) (*User, error) {
-	cu := auth.FromContext(ctx)
-	u, err := uc.ur.GetUserByID(ctx, cu.UserID)
+	claims, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, v1.ErrorContentMissing("jwt Claims error")
+	}
+	my := claims.(*auth.MyClaims)
+	u, err := uc.ur.GetUserByID(ctx, my.Uid)
 	if err != nil {
 		return nil, v1.ErrorSqlError(err.Error())
 	}
@@ -123,8 +129,7 @@ func (uc *UserUsecase) GetCurrentUser(ctx context.Context) (*User, error) {
 }
 
 func (uc *UserUsecase) UpdateUser(ctx context.Context, uu *UserUpdate) (*UserLogin, error) {
-	cu := auth.FromContext(ctx)
-	u, err := uc.ur.GetUserByID(ctx, cu.UserID)
+	u, err := uc.ur.GetUserByUsername(ctx, uu.Username)
 	if err != nil {
 		return nil, v1.ErrorSqlError(err.Error())
 	}
@@ -136,7 +141,7 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, uu *UserUpdate) (*UserLog
 	}
 	return &UserLogin{
 		Phone:    u.Phone,
-		UserName: u.UserName,
+		Username: u.Username,
 		Token:    uc.generateToken(u.Id),
 	}, nil
 }

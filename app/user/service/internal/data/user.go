@@ -33,7 +33,7 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 func (r *userRepo) CreateUser(ctx context.Context, u *biz.User) error {
 	user := User{
 		Phone:        u.Phone,
-		Username:     u.UserName,
+		Username:     u.Username,
 		RealName:     u.RealName,
 		PasswordHash: u.PasswordHash,
 	}
@@ -43,7 +43,7 @@ func (r *userRepo) CreateUser(ctx context.Context, u *biz.User) error {
 
 func (r *userRepo) UpdateUser(ctx context.Context, in *biz.User) (rv *biz.User, err error) {
 	u := new(User)
-	err = r.data.db.Where("username = ?", in.UserName).First(u).Error
+	err = r.data.db.Where("username = ?", in.Username).First(u).Error
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (r *userRepo) UpdateUser(ctx context.Context, in *biz.User) (rv *biz.User, 
 	return &biz.User{
 		Id:           u.ID,
 		Phone:        u.Phone,
-		UserName:     u.Username,
+		Username:     u.Username,
 		RealName:     u.RealName,
 		PasswordHash: u.PasswordHash,
 	}, nil
@@ -72,7 +72,7 @@ func (r *userRepo) GetUserByPhone(ctx context.Context, phone int) (rv *biz.User,
 	return &biz.User{
 		Id:           u.ID,
 		Phone:        u.Phone,
-		UserName:     u.Username,
+		Username:     u.Username,
 		RealName:     u.RealName,
 		PasswordHash: u.PasswordHash,
 	}, nil
@@ -87,7 +87,7 @@ func (r *userRepo) GetUserByID(ctx context.Context, id uint) (rv *biz.User, err 
 	return &biz.User{
 		Id:           u.ID,
 		Phone:        u.Phone,
-		UserName:     u.Username,
+		Username:     u.Username,
 		RealName:     u.RealName,
 		PasswordHash: u.PasswordHash,
 	}, nil
@@ -102,7 +102,7 @@ func (r *userRepo) GetUserByUsername(ctx context.Context, username string) (rv *
 	return &biz.User{
 		Id:           u.ID,
 		Phone:        u.Phone,
-		UserName:     u.Username,
+		Username:     u.Username,
 		RealName:     u.RealName,
 		PasswordHash: u.PasswordHash,
 	}, nil

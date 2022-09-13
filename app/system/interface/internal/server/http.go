@@ -41,7 +41,9 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, casbin2 *conf.Casbin, ad *gorm
 			selector.Server(
 				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
 					return []byte(ac.ApiKey), nil
-				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256), jwt.WithClaims(&auth.MyClaims{})),
+				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256), jwt.WithClaims(func() jwt2.Claims {
+					return &auth.MyClaims{}
+				})),
 				casbin.Server(casbin.WithCasbinModel(m), casbin.WithCasbinPolicy(ad)),
 			).Match(NewWhiteListMatcher()).Build(),
 		),

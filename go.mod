@@ -6,14 +6,18 @@ require (
 	github.com/casbin/casbin/v2 v2.54.0
 	github.com/casbin/gorm-adapter/v3 v3.10.0
 	github.com/davecgh/go-spew v1.1.1
-	github.com/go-kratos/kratos/v2 v2.1.4
-	github.com/golang-jwt/jwt/v4 v4.2.0
+	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220907034423-667d63839c39
+	github.com/go-kratos/kratos/v2 v2.5.0
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/golang/mock v1.6.0 // indirect
-	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/wire v0.5.0
+	github.com/hashicorp/consul/api v1.14.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/spf13/cast v1.5.0
 	github.com/stretchr/testify v1.7.1
+	go.opentelemetry.io/otel v1.10.0
+	go.opentelemetry.io/otel/exporters/jaeger v1.10.0
+	go.opentelemetry.io/otel/sdk v1.10.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
